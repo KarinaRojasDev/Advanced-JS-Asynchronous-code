@@ -158,18 +158,16 @@ El usuario escribirá en el input el nombre de usuario de GitHub que quiera busc
 Después llamaremos a la función **getAndPrintGitHubUserProfile(username)** 
 que se ejecute cuando se pulse el botón buscar.(Esto no se testea). */
 
-/* document.body.innerHTML = `<section>
-            <label for="userGit">Usuario GitHub:</label>
-            <input type="text" id="userGit" name="userGit" placeholder="Escriba un usuario de GitHub" required>
-            <button type="submit" class="btnBuscar">Buscar</button>
-        </section>
-        `;
+/* document.body.innerHTML = `<label for="userGit">Introduzca usuario de GitHub</label>
+     <input type="text" id="userGit">
+     <button type="submit" class="btnBuscar">Buscar</button>`;
+
 document.querySelector(".btnBuscar").addEventListener("click", () => {
-  let userName = document.getElementById("userGit").value;
-  getAndPrintGitHubUserProfile(userName).then((html) => {
-    document.body.innerHTML += html;
-  });
-});  */
+  let userGitHub = document.getElementById("userGit").value;
+  getAndPrintGitHubUserProfile(userGitHub).then(
+    (html) => (document.body.innerHTML += html),
+  );
+}); */
 
 /* 9.- Dada una lista de usuarios de github guardada en una array,
 crea una funcion **fetchGithubUsers(userNames)** 
@@ -189,26 +187,32 @@ Pasos:
 Consigue que se imprima por consola la url del repositorio de cada usuario.
 Consigue que se imprima por consola el nombre de cada usuario. */
 
-function fetchGithubUsers(userNames) {
-  // Por cada usuario haces fetch + convertir a JSON
-  const promesas = userNames.map((name) =>
-        fetch(`https://api.github.com/users/${name}`)
-        .then((res) => res.json())
-  );
+let listNamesUser = [
+  "KarinaRojasDev",
+  "torvalds",
+  "gaearon",
+  "sindresorhus",
+  "midudev",
+  "kamranahmedse",
+  "addyosmani",
+  "KarinaRojasDev",
+];
 
-  //Promise.all espera a que todas terminen
-  return Promise.all(promesas)
-        .then((usuarios) => {
-        // aquí tienes el array de usuarios resueltos
-        // imprime el nombre y url de repos de cada uno
-        usuarios.forEach((user) => {
-            console.log(user.name);
-            console.log(user.repos_url);
-        });
-    return usuarios;
-  });
+async function fetchGithubUsers(userNames) {
+  try {
+    let promesas = userNames.map((user) =>
+      fetch(`https://api.github.com/users/${user}`).then((rest) => rest.json()),
+    );
+
+    const users = await Promise.all(promesas);
+    for (const user of users) {
+      console.log(user.name);
+      console.log(user.url);
+    }
+    return users;
+  } catch (error) {
+    console.error("Error fetching data from fakestoreapi:", error);
+  }
 }
 
-// llamas a la función con el array de nombres
-const userNames = ["KarinaRojasDev", "midudev", "torvalds"];
-fetchGithubUsers(userNames);
+fetchGithubUsers(listNamesUser);
